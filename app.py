@@ -52,10 +52,14 @@ def sc():
     score=request.args['score']                 #get用request.args
     return render_template('sc.html', marks = int(score))
 
-@app.route('/result/')
+@app.route('/result/',methods = ['POST', 'GET'])
 def result():
-    dict = {'phy': 50, 'che': 60, 'maths': 70}
-    return render_template('result.html', result=dict)
+    if request.method == 'POST':
+        result = request.form   #可以直接当字典来操作
+        return render_template("result.html", result=result)
+    else:
+        dict = {'phy': 50, 'che': 60, 'maths': 70}
+        return render_template('result.html', result=dict)
 
 if __name__ == '__main__':
     app.debug = True
