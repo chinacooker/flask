@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table border = 10>
+     {% for key,value in result.items() %}
+<!--python3用items-->
+    <tr>
+       <th>{{ key }}</th>
+        <!--python3标签格式不需要转义了，具体区别待确定-->
+       <td>{{ value }}</td>
+    </tr>
+
+ {% endfor %}
+  </table>
+</body>
+</html>
