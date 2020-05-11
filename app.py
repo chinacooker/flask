@@ -1,4 +1,5 @@
-from flask import Flask,redirect,url_for,request,render_template
+from flask import Flask,redirect,url_for,request,render_template,make_response,escape,session
+
 # Flask Request对象
 # Form - 它是一个字典对象，包含表单参数及其值的键和值对。
 # args - 解析查询字符串的内容，它是问号（？）之后的URL的一部分。
@@ -6,6 +7,7 @@ from flask import Flask,redirect,url_for,request,render_template
 # files - 与上传文件有关的数据。
 # method - 当前请求方法
 app = Flask(__name__)
+app.config['SECRET_KEY'] = '123456'
 
 @app.route('/')
 def hello_world():
@@ -29,7 +31,6 @@ def hello_int(x):
 @app.route('/login',methods=['POST','GET'])
 def login():
     if request.method=='POST':
-        # user=request.form('nm')
         user=request.form.get('nm')                  #当前目录下login_html提交表单实现该功能
                                                 #post用request.form.get
 
@@ -61,8 +62,49 @@ def result():
         dict = {'phy': 50, 'che': 60, 'maths': 70}
         return render_template('result.html', result=dict)
 
+@app.route('/setcookie',methods=['POST','GET'])
+def setcookie():
+    if request.method=='POST':
+        user =request.form.get('nm')
+        resp = make_response(render_template('readcookie.html'))
+        resp.set_cookie('userID', user)
+
+        return resp
+    else:
+        return 'Hello get'
+@app.route('/getcookie')
+def getcookie():
+   name = request.cookies.get('userID')
+   return ('welcome userID: %s '%name)
+
+
+
+
+
+@app.route('/new')
+def indexnew():
+    if 'username' in session:
+        username = session.get('username')
+        return render_template("loged.html",name=username)
+    else:
+        return render_template('notloged.html')
+@app.route('/loginnew',methods=['POST','GET'])
+def loginnew():
+    if request.method=='POST':
+        session['username'] = request.form.get('username')
+        username = session.get('username')
+        return render_template("loged.html",name=username)
+    else:
+        return render_template("loginnew.html")
+@app.route('/logoutnew')
+def logoutnew():
+    session.pop('username',None)
+    return redirect(url_for('indexnew'))
+
+
 if __name__ == '__main__':
     app.debug = True
+    app.secret_key = '123456'
 
     app.add_url_rule('/x',view_func=hello_world)
 
